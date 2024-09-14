@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem de Funcionários por Habilidade</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .skill-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .skill-table th, .skill-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .skill-table th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+    </style>
+    <script>
+        async function fetchEmployeeCount(companyUrl, skillExplicits, keyword) {
+            const url = 'https://linkedin-data-scraper.p.rapidapi.com/company_employee_count_per_skill';
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify({ companyUrl, skillExplicits, keyword })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function handleSkillSearch() {
+            const companyUrl = document.getElementById('companyUrl').value.trim();
+            const skillExplicits = document.getElementById('skillExplicits').value.trim();
+            const keyword = document.getElementById('keyword').value.trim();
+
+            if (!companyUrl || !keyword) {
+                document.getElementById('skillCount').innerHTML = 'Por favor, insira a URL da empresa e a habilidade desejada.';
+                return;
+            }
+
+            try {
+                const data = await fetchEmployeeCount(companyUrl, skillExplicits, keyword);
+                if (data.success && data.count_per_catagory && Array.isArray(data.count_per_catagory)) {
+                    const rows = data.count_per_catagory.map(item => `
+                        <tr>
+                            <td>${item.catagory}</td>
+                            <td>${item.values.map(value => `<div>${value.displayName}: ${value.count}</div>`).join('')}</td>
+                        </tr>
+                    `).join('');
+
+                    document.getElementById('skillCount').innerHTML = `
+                        <table class="skill-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Contagem por Habilidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById('skillCount').innerHTML = 'Nenhum dado encontrado.';
+                }
+            } catch (error) {
+                document.getElementById('skillCount').innerHTML = `Erro ao buscar contagem de funcionários: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Contagem de Funcionários por Habilidade</h1>
+        
+        <!-- Formulário de consulta -->
+        <div class="card">
+            <div class="card-header">Consulta de Contagem por Habilidade</div>
+            <div class="card-body">
+                <input type="text" id="companyUrl" placeholder="Digite a URL da empresa no LinkedIn" class="form-control" style="margin-bottom: 10px;">
+                <input type="text" id="skillExplicits" placeholder="Digite a(s) habilidade(s) (separadas por vírgula)" class="form-control" style="margin-bottom: 10px;">
+                <input type="text" id="keyword" placeholder="Digite a habilidade desejada" class="form-control" style="margin-bottom: 10px;">
+                <button class="btn btn-primary" onclick="handleSkillSearch()">Buscar</button>
+                <div id="skillCount" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

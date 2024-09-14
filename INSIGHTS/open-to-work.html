@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Open to Work</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Status Open to Work</h1>
+        <form id="linkedinForm">
+            <div class="form-group">
+                <label for="linkedinUrl">URL do Perfil LinkedIn:</label>
+                <input type="text" class="form-control" id="linkedinUrl"
+                    placeholder="https://www.linkedin.com/in/username" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Verificar</button>
+        </form>
+        <div class="result" id="result">
+            <!-- Result will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('linkedinForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const url = document.getElementById('linkedinUrl').value;
+            const encodedUrl = encodeURIComponent(url);
+
+            fetch(`https://fresh-linkedin-profile-data.p.rapidapi.com/get-opentowork-status?linkedin_url=${encodedUrl}`, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let resultHtml = `<h3>Resultado:</h3>`;
+                    resultHtml += `<p>Status Open to Work: <strong>${data.open_to_work ? 'Sim' : 'Não'}</strong></p>`;
+                    resultHtml += `<p>Mensagem: ${data.message}</p>`;
+                    document.getElementById('result').innerHTML = resultHtml;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = `<p class="text-danger">Ocorreu um erro ao buscar os dados. Por favor, tente novamente mais tarde.</p>`;
+                });
+        });
+    </script>
+</body>
+
+</html>

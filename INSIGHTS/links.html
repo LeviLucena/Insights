@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links Úteis para Prospecção e Gestão</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-link {
+            display: block;
+            color: #2980b9;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .card-link:hover {
+            color: #e74c3c;
+        }
+
+        .resources {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .resources h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+
+        @media (max-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Links Úteis para Prospecção e Gestão</h1>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">Geração de Documentos</div>
+                <div class="card-body">
+                    <a href="?template=661d8feedb0a64624fe3a226" class="card-link">Gerador de Ata de Reunião</a>
+                    <a href="?template=6601aae8c623f6cbb455250f" class="card-link">Gerador de Briefing de Reunião</a>
+                    <a href="?template=665df325e32b1f2e4f5ef06b" class="card-link">Gerador de Dossiês</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Prospecção LinkedIn</div>
+                <div class="card-body">
+                    <a href="?template=667410bb506adbdc4a0e0d79" class="card-link">Prospecção LinkedIn</a>
+                    <a href="?template=66689305420ef921344b8630" class="card-link">Prospecção por E-mail</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Prospecção "Wow Factor"</div>
+                <div class="card-body">
+                    <a href="?template=667dcd39e0530ae64c910d64" class="card-link">Prospecção MKT "Wow Factor"</a>
+                    <a href="?template=669ab8c7580554a8ffad7481" class="card-link">Prospecção Doc Analyzer "Wow
+                        Factor"</a>
+                    <a href="?template=668ecf5dc83e478c2ab21ea9" class="card-link">Prospecção Scala "Wow Factor"</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Vendas</div>
+                <div class="card-body">
+                    <a href="?template=66a3a22ebc0baf7d51e248fe" class="card-link">Roteiro de Ligação Fria</a>
+                    <a href="?template=65bd38e174734adad32b9dc2" class="card-link">Recomendações de Ofertas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="resources">
+            <h2>Recursos Importantes</h2>
+            <ul>
+                <li><strong>CRM (Customer Relationship Management):</strong> Salesforce</li>
+                <li><strong>Sales Navigator:</strong> Base de contatos do LinkedIn</li>
+                <li><strong>Investor Relations:</strong> Site obrigatório para toda empresa que está na bolsa de
+                    valores, contendo seus resultados financeiros e planejamento estratégico.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.card-link');
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+                    window.open('https://gpt-templates.saiapplications.com/' + url, '_blank');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

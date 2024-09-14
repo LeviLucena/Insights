@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Empresas 🏪</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .company-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .company-card h4 {
+            margin-top: 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Busca de Empresas🏪</h1>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="company_name">Nome da Empresa</label>
+                <input type="text" id="company_name" class="form-control" placeholder="Digite o nome da empresa">
+            </div>
+            <div class="form-group">
+                <label for="industry">Indústria</label>
+                <input type="text" id="industry" class="form-control" placeholder="Digite a indústria">
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const company_name = document.getElementById('company_name').value.trim();
+            const industry = document.getElementById('industry').value.trim();
+
+            // Verifica se pelo menos um dos campos está preenchido
+            if (!company_name && !industry) {
+                alert('Por favor, preencha pelo menos um campo de pesquisa (Nome da Empresa ou Indústria).');
+                return;
+            }
+
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            // Cria o objeto de dados para a requisição
+            const data = {
+                "company_name": company_name || "", // Se não preencher, envia string vazia
+                "industry": industry || "",
+                "employee_range": "",
+                "city": "",
+                "state": "",
+                "country": "",
+                "count": 10,
+                "sort_by": "follower_count"
+            };
+
+            // Faz a requisição à API
+            fetch('https://fresh-linkedin-profile-data.p.rapidapi.com/search-companies-instantly', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(response => {
+                    const companies = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    loadingDiv.style.display = 'none';
+
+                    if (companies && companies.length > 0) {
+                        companies.forEach(company => {
+                            const companyCard = `
+                            <div class="company-card">
+                                <h4>${company.company_name}</h4>
+                                <p><strong>Descrição:</strong> ${company.description}</p>
+                                <p><strong>Contagem de Funcionários:</strong> ${company.employee_count}</p>
+                                <p><strong>Faixa de Funcionários:</strong> ${company.employee_range}</p>
+                                <p><strong>Seguidores:</strong> ${company.follower_count}</p>
+                                <p><strong>Endereço:</strong> ${company.hq_full_address}</p>
+                                <p><strong>Indústria:</strong> ${company.industry}</p>
+                                <p><strong>Perfil no LinkedIn:</strong> <a href="${company.linkedin_url}" target="_blank">${company.linkedin_url}</a></p>
+                            </div>
+                        `;
+                            resultsDiv.innerHTML += companyCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                    loadingDiv.style.display = 'none';
+                });
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

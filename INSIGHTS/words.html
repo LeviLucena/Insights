@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Palavras💬</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .result {
+            margin-top: 10px;
+            white-space: pre-wrap;
+            /* Preserve line breaks and white spaces */
+        }
+    </style>
+    <script>
+        async function fetchDefinitions(term) {
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${term}/definitions`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchSynonyms(term) {
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${term}/synonyms`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchPronunciation(term) {
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${term}/pronunciation`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchSimilarTo(term) {
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${term}/similarTo`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchRhymes(term) {
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${term}/rhymes`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'wordsapiv1.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function handleRequest(type) {
+            const term = document.getElementById('term').value.trim();
+            if (!term) {
+                document.getElementById('result').innerHTML = 'Por favor, insira uma palavra.';
+                return;
+            }
+
+            try {
+                let data;
+                let resultText = '';
+                if (type === 'definitions') {
+                    data = await fetchDefinitions(term);
+                    if (data.definitions && Array.isArray(data.definitions)) {
+                        resultText += `Definições:\n\n` + data.definitions.map(def =>
+                            `${def.definition} (Parte do discurso: ${def.partOfSpeech})`
+                        ).join('\n\n');
+                    } else {
+                        resultText += 'Nenhuma definição encontrada.';
+                    }
+                } else if (type === 'synonyms') {
+                    data = await fetchSynonyms(term);
+                    if (data.synonyms && Array.isArray(data.synonyms)) {
+                        resultText += `Sinônimos:\n\n` + data.synonyms.join(', ');
+                    } else {
+                        resultText += 'Nenhum sinônimo encontrado.';
+                    }
+                } else if (type === 'pronunciation') {
+                    data = await fetchPronunciation(term);
+                    if (data.pronunciation) {
+                        resultText += `Pronúncia:\n\n` +
+                            `Todas: ${data.pronunciation.all || 'Não disponível'}\n` +
+                            `Substantivo: ${data.pronunciation.noun || 'Não disponível'}\n` +
+                            `Verbo: ${data.pronunciation.verb || 'Não disponível'}`;
+                    } else {
+                        resultText += 'Nenhuma pronúncia encontrada.';
+                    }
+                } else if (type === 'similarTo') {
+                    data = await fetchSimilarTo(term);
+                    if (data.similarTo && Array.isArray(data.similarTo)) {
+                        resultText += `Palavras Similares:\n\n` + data.similarTo.join(', ');
+                    } else {
+                        resultText += 'Nenhuma palavra similar encontrada.';
+                    }
+                } else if (type === 'rhymes') {
+                    data = await fetchRhymes(term);
+                    if (data.rhymes && Array.isArray(data.rhymes.all)) {
+                        resultText += `Rimas:\n\n` + data.rhymes.all.join(', ');
+                    } else {
+                        resultText += 'Nenhuma rima encontrada.';
+                    }
+                }
+                document.getElementById('result').innerHTML = resultText;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `Erro ao buscar dados: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Consulta de Palavras💬</h1>
+
+        <!-- Definições, Sinônimos, Pronúncia, Palavras Similares e Rimas -->
+        <div class="card">
+            <div class="card-header">Consulta de Palavra</div>
+            <div class="card-body">
+                <input type="text" id="term" placeholder="Digite uma palavra" class="form-control">
+                <button class="btn btn-primary" onclick="handleRequest('definitions')">Buscar Definições</button>
+                <button class="btn btn-secondary" onclick="handleRequest('synonyms')">Buscar Sinônimos</button>
+                <button class="btn btn-info" onclick="handleRequest('pronunciation')">Buscar Pronúncia</button>
+                <button class="btn btn-success" onclick="handleRequest('similarTo')">Buscar Palavras Similares</button>
+                <button class="btn btn-warning" onclick="handleRequest('rhymes')">Buscar Rimas</button>
+                <pre id="result" class="result"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

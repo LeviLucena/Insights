@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Perfil💼</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .post,
+        .similar-profile,
+        .skill {
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .post img,
+        .similar-profile img {
+            max-width: 100px;
+            border-radius: 50%;
+        }
+
+        .post a,
+        .similar-profile a {
+            color: #0073b1;
+            /* LinkedIn color */
+        }
+
+        .skills-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .skills-table th,
+        .skills-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .skills-table th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+    <script>
+        async function fetchPosts(profileUrl) {
+            const url = `https://linkedin-data-scraper.p.rapidapi.com/profile_updates?profile_url=${encodeURIComponent(profileUrl)}&page=1&reposts=1&comments=1`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchSimilarProfiles(profileUrl) {
+            const url = `https://linkedin-data-scraper.p.rapidapi.com/similar_profiles?profileUrl=${encodeURIComponent(profileUrl)}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function fetchPersonSkills(link) {
+            const url = 'https://linkedin-data-scraper.p.rapidapi.com/person_skills';
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify({ link })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function handleSearch() {
+            const profileUrl = document.getElementById('profileUrl').value.trim();
+            const searchType = document.getElementById('searchType').value;
+
+            if (!profileUrl) {
+                document.getElementById('posts').innerHTML = '';
+                document.getElementById('similarProfiles').innerHTML = '';
+                document.getElementById('skillResult').innerHTML = 'Por favor, insira uma URL de perfil.';
+                return;
+            }
+
+            if (searchType === 'posts' || searchType === 'both') {
+                try {
+                    const postsData = await fetchPosts(profileUrl);
+                    if (postsData.success && postsData.posts && Array.isArray(postsData.posts)) {
+                        const posts = postsData.posts.map(post => `
+                            <div class="post">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="${post.actor.actorLink}" target="_blank">
+                                            <img src="${post.actor.actorImage}" alt="${post.actor.actorName}">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            <a href="${post.actor.actorLink}" target="_blank">${post.actor.actorName}</a>
+                                            <small>${post.actor.actorSubDescription}</small>
+                                        </h4>
+                                        <p>${post.postText}</p>
+                                        <a href="${post.postLink}" target="_blank">Ver postagem</a>
+                                        <p>Likes: ${post.socialCount.numLikes}, Comentários: ${post.socialCount.numComments}, Compartilhamentos: ${post.socialCount.numShares}</p>
+                                        <p>Publicado em: ${new Date(post.postedAt).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                        document.getElementById('posts').innerHTML = posts;
+                    } else {
+                        document.getElementById('posts').innerHTML = 'Nenhuma postagem encontrada.';
+                    }
+                } catch (error) {
+                    document.getElementById('posts').innerHTML = `Erro ao buscar postagens: ${error.message}`;
+                }
+            } else {
+                document.getElementById('posts').innerHTML = '';
+            }
+
+            if (searchType === 'profiles' || searchType === 'both') {
+                try {
+                    const similarProfilesData = await fetchSimilarProfiles(profileUrl);
+                    if (similarProfilesData.success && similarProfilesData.response && Array.isArray(similarProfilesData.response)) {
+                        const similarProfiles = similarProfilesData.response.map(profile => `
+                            <div class="similar-profile">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="${profile.textActionTarget}" target="_blank">
+                                            <img src="${profile.profilePictures ? profile.profilePictures[0] : ''}" alt="${profile.firstName} ${profile.lastName}">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            <a href="${profile.textActionTarget}" target="_blank">${profile.firstName} ${profile.lastName}</a>
+                                        </h4>
+                                        <p>${profile.subtitle}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                        document.getElementById('similarProfiles').innerHTML = similarProfiles;
+                    } else {
+                        document.getElementById('similarProfiles').innerHTML = 'Nenhum perfil semelhante encontrado.';
+                    }
+                } catch (error) {
+                    document.getElementById('similarProfiles').innerHTML = `Erro ao buscar perfis semelhantes: ${error.message}`;
+                }
+            } else {
+                document.getElementById('similarProfiles').innerHTML = '';
+            }
+
+            if (searchType === 'skills' || searchType === 'both') {
+                try {
+                    const skillsData = await fetchPersonSkills(profileUrl);
+                    if (skillsData.success && skillsData.data && skillsData.data.skills && Array.isArray(skillsData.data.skills)) {
+                        const rows = skillsData.data.skills.map(skill => `
+                            <tr>
+                                <td>${skill.title}</td>
+                                <td>${skill.subComponents.map(comp => comp.text).join('<br>')}</td>
+                            </tr>
+                        `).join('');
+
+                        document.getElementById('skillResult').innerHTML = `
+                            <table class="skills-table">
+                                <thead>
+                                    <tr>
+                                        <th>Habilidade</th>
+                                        <th>Detalhes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        document.getElementById('skillResult').innerHTML = 'Nenhum dado encontrado.';
+                    }
+                } catch (error) {
+                    document.getElementById('skillResult').innerHTML = `Erro ao buscar habilidades: ${error.message}`;
+                }
+            } else {
+                document.getElementById('skillResult').innerHTML = '';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Análise de Perfil💼</h1>
+
+        <!-- Formulário de consulta -->
+        <div class="card">
+            <div class="card-header">Consulta de Postagens, Perfis Semelhantes e Habilidades</div>
+            <div class="card-body">
+                <input type="text" id="profileUrl" placeholder="Digite a URL do perfil do LinkedIn"
+                    class="form-control">
+                <select id="searchType" class="form-control" style="margin-top: 10px;">
+                    <option value="posts">Buscar Postagens</option>
+                    <option value="profiles">Buscar Perfis Semelhantes</option>
+                    <option value="skills">Buscar Habilidades</option>
+                    <option value="both">Buscar Postagens, Perfis Semelhantes e Habilidades</option>
+                </select>
+                <button class="btn btn-primary" style="margin-top: 10px;" onclick="handleSearch()">Buscar</button>
+                <div id="posts" class="result"></div>
+                <div id="similarProfiles" class="result"></div>
+                <div id="skillResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

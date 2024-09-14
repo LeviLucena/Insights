@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Perfil🎓</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .profile-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .profile-card h4 {
+            margin-top: 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Busca de Perfil🎓</h1>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="name">Nome</label>
+                <input type="text" id="name" class="form-control" placeholder="Digite o nome" required>
+            </div>
+            <div class="form-group">
+                <label for="company">Empresa</label>
+                <input type="text" id="company" class="form-control" placeholder="Digite o nome da empresa" required>
+            </div>
+            <div class="form-group">
+                <label for="job_title">Título do Trabalho</label>
+                <input type="text" id="job_title" class="form-control" placeholder="Digite o título do trabalho"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="location">Localização</label>
+                <input type="text" id="location" class="form-control" placeholder="Digite a localização" required>
+            </div>
+            <div class="form-group">
+                <label for="keyword">Palavra-chave</label>
+                <input type="text" id="keyword" class="form-control" placeholder="Digite uma palavra-chave" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const job_title = document.getElementById('job_title').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const keyword = document.getElementById('keyword').value.trim();
+
+            if (!name || !company || !job_title || !location || !keyword) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            const data = {
+                "name": name,
+                "company": company,
+                "job_title": job_title,
+                "location": location,
+                "keyword": keyword,
+                "page": 1
+            };
+
+            fetch('https://fresh-linkedin-profile-data.p.rapidapi.com/google-profiles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(response => {
+                    const profiles = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    loadingDiv.style.display = 'none';
+
+                    if (profiles && profiles.length > 0) {
+                        profiles.forEach(profile => {
+                            const profileCard = `
+                            <div class="profile-card">
+                                <h4>Perfil LinkedIn:</h4>
+                                <p><a href="${profile}" target="_blank">${profile}</a></p>
+                            </div>
+                        `;
+                            resultsDiv.innerHTML += profileCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                    loadingDiv.style.display = 'none';
+                });
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

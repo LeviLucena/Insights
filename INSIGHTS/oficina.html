@@ -1,0 +1,225 @@
+<html><head><base href="https://creative-workshop.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oficina de Co-criação Interativa Aprimorada</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    max-width: 800px;
+    width: 90%;
+  }
+  h1 {
+    color: #4a90e2;
+    text-align: center;
+  }
+  .step {
+    margin-bottom: 20px;
+  }
+  .step-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .challenge-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  .challenge-item {
+    background-color: #e6f3ff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .challenge-item:hover {
+    background-color: #d1e8ff;
+  }
+  .selected {
+    background-color: #4a90e2;
+    color: white;
+  }
+  #solution-area {
+    display: none;
+  }
+  textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+  }
+  button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #3a7bc8;
+  }
+  #timer {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #presentation {
+    display: none;
+    text-align: center;
+  }
+  .idea-prompt {
+    font-style: italic;
+    color: #666;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Oficina de Co-criação Interativa</h1>
+    
+    <div class="step">
+      <div class="step-title">1. Escolha um problema/desafio:</div>
+      <ul class="challenge-list">
+        <li class="challenge-item" onclick="selectChallenge(this, 'alignment')">Falta de alinhamento entre os membros da equipe</li>
+        <li class="challenge-item" onclick="selectChallenge(this, 'creativity')">Baixa criatividade e geração de ideias inovadoras</li>
+        <li class="challenge-item" onclick="selectChallenge(this, 'timeManagement')">Gestão do tempo e priorização de tarefas</li>
+        <li class="challenge-item" onclick="selectChallenge(this, 'creativeStrategic')">Conflito entre pensamento criativo e estratégico</li>
+        <li class="challenge-item" onclick="selectChallenge(this, 'engagement')">Engajamento insuficiente do público alvo</li>
+      </ul>
+    </div>
+    
+    <div id="solution-area" class="step">
+      <div class="step-title">2. Co-crie uma solução inovadora:</div>
+      <textarea id="problem-definition" placeholder="a. Defina o problema claramente"></textarea>
+      <div id="idea-prompt" class="idea-prompt"></div>
+      <textarea id="idea-generation" placeholder="b. Gere o máximo de ideias possíveis"></textarea>
+      <textarea id="selected-idea" placeholder="c. Selecione a ideia mais promissora e desenvolva-a"></textarea>
+      <button onclick="startTimer()">Iniciar Temporizador (10 minutos)</button>
+    </div>
+    
+    <div id="timer"></div>
+    
+    <div id="presentation">
+      <h2>Apresentação da Solução</h2>
+      <p>Você tem 5 minutos para apresentar sua solução!</p>
+      <button onclick="startPresentationTimer()">Iniciar Apresentação</button>
+    </div>
+  </div>
+
+  <script>
+    const challengePrompts = {
+      alignment: "Considere técnicas de comunicação, ferramentas colaborativas e atividades de team building.",
+      creativity: "Explore métodos de brainstorming, técnicas de pensamento lateral e ambientes que estimulem a criatividade.",
+      timeManagement: "Pense em metodologias ágeis, ferramentas de gestão de projetos e técnicas de priorização.",
+      creativeStrategic: "Considere abordagens que integrem design thinking com planejamento estratégico.",
+      engagement: "Explore estratégias de gamificação, personalização de conteúdo e canais de feedback interativos."
+    };
+
+    const challengeSolutions = {
+      alignment: {
+        definition: "Falta de alinhamento entre os membros da equipe, resultando em comunicação ineficiente, objetivos conflitantes e diminuição da produtividade geral.",
+        ideas: "1. Implementar reuniões diárias de alinhamento\n2. Criar um sistema de mentoria interna\n3. Desenvolver uma plataforma de colaboração online personalizada\n4. Organizar retiros de equipe trimestrais\n5. Estabelecer um programa de reconhecimento de equipe\n6. Implementar a metodologia OKR (Objetivos e Resultados-Chave)\n7. Criar um 'mural de visão' compartilhado no escritório",
+        selectedIdea: "Desenvolver uma plataforma de colaboração online personalizada que integre comunicação em tempo real, gerenciamento de tarefas e um sistema de feedback contínuo. Esta plataforma incluirá um painel de visualização de objetivos da equipe, permitirá a criação de canais temáticos para diferentes projetos e facilitará sessões virtuais de brainstorming. Além disso, implementaremos um sistema de 'check-in' semanal onde cada membro da equipe compartilha seus progressos, desafios e necessidades de suporte."
+      },
+      creativity: {
+        definition: "Baixa criatividade e geração de ideias inovadoras, resultando em estagnação de produtos/serviços e perda de vantagem competitiva no mercado.",
+        ideas: "1. Implementar sessões semanais de 'pensamento fora da caixa'\n2. Criar um laboratório de inovação interno\n3. Estabelecer parcerias com startups criativas\n4. Implementar um programa de rotação de funções\n5. Organizar hackathons internos trimestrais\n6. Desenvolver um banco de ideias digital\n7. Implementar a técnica de 'associação forçada' nas reuniões",
+        selectedIdea: "Criar um laboratório de inovação interno, um espaço físico e virtual dedicado à experimentação e ao pensamento criativo. Este laboratório será equipado com tecnologias de ponta, como realidade virtual e impressoras 3D, e terá uma programação regular de workshops conduzidos por especialistas em criatividade e inovação. Implementaremos um sistema de 'tempo livre criativo', onde os funcionários podem dedicar 20% do seu tempo de trabalho a projetos inovadores de sua escolha. Além disso, estabeleceremos um fundo de inovação para financiar as ideias mais promissoras geradas no laboratório."
+      },
+      timeManagement: {
+        definition: "Gestão do tempo e priorização de tarefas ineficientes, levando a prazos perdidos, estresse na equipe e qualidade comprometida do trabalho.",
+        ideas: "1. Implementar a técnica Pomodoro em toda a equipe\n2. Desenvolver um sistema de priorização baseado em impacto/esforço\n3. Criar dashboards personalizados de produtividade\n4. Estabelecer 'horas de foco' diárias sem interrupções\n5. Implementar uma política de 'inboxes zero'\n6. Utilizar IA para otimizar agendamentos\n7. Criar um 'banco de tempo' para tarefas não planejadas",
+        selectedIdea: "Desenvolver um sistema inteligente de gestão de tempo e tarefas que combine IA com metodologias ágeis. Este sistema analisará padrões de produtividade individual e da equipe, sugerindo automaticamente a melhor alocação de tarefas e horários para cada membro. Implementaremos 'sprints' semanais com revisões diárias rápidas, e o sistema ajudará a priorizar tarefas baseando-se em deadlines, importância estratégica e carga de trabalho atual. Além disso, integraremos uma função de 'bloqueio de foco' que minimiza distrações durante períodos de trabalho intenso, e um dashboard em tempo real que mostra o progresso da equipe em relação aos objetivos do projeto."
+      },
+      creativeStrategic: {
+        definition: "Conflito entre pensamento criativo e estratégico, resultando em ideias inovadoras que não se alinham com os objetivos estratégicos da empresa ou estratégias rígidas que sufocam a criatividade.",
+        ideas: "1. Implementar workshops de 'estratégia criativa'\n2. Criar equipes multidisciplinares para cada projeto\n3. Desenvolver uma matriz de avaliação de ideias que equilibre criatividade e viabilidade estratégica\n4. Estabelecer um 'conselho de inovação' com membros criativos e estratégicos\n5. Implementar a metodologia de 'design thinking' em processos estratégicos\n6. Criar um programa de mentoria cruzada entre departamentos criativos e estratégicos\n7. Desenvolver um 'playbook' de inovação estratégica",
+        selectedIdea: "Implementar um processo de 'Inovação Estratégica Integrada' (ISI) que combine design thinking, planejamento estratégico e prototipagem rápida. Este processo começará com sessões de imersão onde equipes multidisciplinares (incluindo membros das áreas criativa e estratégica) exploram desafios do negócio. Utilizaremos técnicas de design thinking para gerar ideias inovadoras, que serão então filtradas através de uma 'Matriz de Alinhamento Estratégico' personalizada. As ideias selecionadas passarão por ciclos rápidos de prototipagem e testes, com feedback contínuo das partes interessadas estratégicas. Implementaremos também um 'Laboratório de Futuro', um espaço dedicado onde equipes podem simular cenários futuros e testar como diferentes inovações se alinham com possíveis direções estratégicas da empresa."
+      },
+      engagement: {
+        definition: "Engajamento insuficiente do público-alvo, resultando em baixa retenção de clientes, menor eficácia das campanhas de marketing e feedback limitado para melhorias de produto/serviço.",
+        ideas: "1. Implementar um programa de gamificação para clientes\n2. Criar uma comunidade online exclusiva para clientes\n3. Desenvolver uma série de webinars interativos mensais\n4. Lançar um programa de co-criação de produtos com clientes\n5. Implementar um sistema de personalização de conteúdo baseado em IA\n6. Criar um programa de embaixadores da marca\n7. Desenvolver uma experiência de realidade aumentada para produtos",
+        selectedIdea: "Desenvolver uma plataforma de engajamento omnichannel alimentada por IA, que oferece uma experiência personalizada e gamificada para cada cliente. Esta plataforma integrará dados de todas as interações do cliente (online e offline) para criar um 'perfil de engajamento' dinâmico. Com base neste perfil, a plataforma oferecerá conteúdo personalizado, desafios gamificados alinhados com os interesses do cliente, e oportunidades de co-criação de produtos. Implementaremos um sistema de recompensas que não apenas oferece benefícios tangíveis, mas também oportunidades de impacto social, permitindo que os clientes convertam pontos em doações para causas de sua escolha. A plataforma também incluirá um 'modo de realidade aumentada' que permite aos clientes visualizar e interagir com produtos em seu próprio ambiente, compartilhar essas experiências, e participar de desafios comunitários."
+      }
+    };
+
+    function selectChallenge(element, challengeType) {
+      document.querySelectorAll('.challenge-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      document.getElementById('solution-area').style.display = 'block';
+      
+      // Update problem definition
+      document.getElementById('problem-definition').value = challengeSolutions[challengeType].definition;
+      
+      // Update idea prompt
+      document.getElementById('idea-prompt').textContent = challengePrompts[challengeType];
+
+      // Update idea generation
+      document.getElementById('idea-generation').value = challengeSolutions[challengeType].ideas;
+
+      // Update selected idea
+      document.getElementById('selected-idea').value = challengeSolutions[challengeType].selectedIdea;
+    }
+
+    function startTimer() {
+      let time = 600; // 10 minutes in seconds
+      const timerElement = document.getElementById('timer');
+      
+      const countDown = setInterval(() => {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        
+        timerElement.innerHTML = `${minutes}:${seconds}`;
+        time--;
+        
+        if (time < 0) {
+          clearInterval(countDown);
+          timerElement.innerHTML = "Tempo esgotado!";
+          document.getElementById('presentation').style.display = 'block';
+        }
+      }, 1000);
+    }
+
+    function startPresentationTimer() {
+      let time = 300; // 5 minutes in seconds
+      const timerElement = document.getElementById('timer');
+      
+      const countDown = setInterval(() => {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        
+        timerElement.innerHTML = `Apresentação: ${minutes}:${seconds}`;
+        time--;
+        
+        if (time < 0) {
+          clearInterval(countDown);
+          timerElement.innerHTML = "Apresentação concluída!";
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

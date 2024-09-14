@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Futurista</title>
+    <!-- Incluindo Bootstrap 4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Estilo do corpo */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* Container principal */
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Estilo da imagem de fundo */
+        .background-image {
+            background: url('imagem-fundo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            flex: 1;
+        }
+
+        /* Estilo do container de login */
+        .login-container {
+            background: rgba(24, 39, 124, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .login-container .form-control {
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #fff;
+            color: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .login-container .form-control::placeholder {
+            color: #fff;
+        }
+
+        .login-container .btn {
+            border-radius: 30px;
+            background: #1e90ff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .login-container .btn:hover {
+            background: #1c86ee;
+        }
+
+        .login-container .btn:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .login-container .form-check-label {
+            color: #fff;
+        }
+
+        .login-container .form-check-input {
+            cursor: pointer;
+        }
+
+        /* Estilo para centralizar o conteúdo do login */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Imagem de fundo -->
+        <div class="background-image"></div>
+
+        <!-- Container de login -->
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h2>Login Futurista</h2>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Usuário" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Senha" required>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts e Comentários 💬</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .post-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .post-card h4 {
+            margin-top: 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Posts e Comentários 💬</h1>
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="profileUrn">URN do Perfil
+                    <span class="help-text" data-toggle="tooltip"
+                        title="A URN (Uniform Resource Name) é um identificador único para perfis do LinkedIn. Você pode encontrá-lo na URL do perfil ou usar uma ferramenta para obtê-lo. Exemplo: urn:li:person:4a0d5d7a3f8e4b6b6e7c77a1d1c09d3e">?</span>
+                </label>
+                <input type="text" id="profileUrn" class="form-control" placeholder="Digite o URN do perfil" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evita o envio do formulário
+
+            const profileUrn = document.getElementById('profileUrn').value;
+
+            // Exibir o indicador de carregamento
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'linkedin-api8.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                }
+            };
+
+            fetch(`https://linkedin-api8.p.rapidapi.com/get-profile-posts-comments?urn=${profileUrn}&sort=mostRelevant&page=1`, options)
+                .then(response => response.json())
+                .then(response => {
+                    const posts = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    // Ocultar o indicador de carregamento
+                    loadingDiv.style.display = 'none';
+
+                    if (posts.length > 0) {
+                        posts.forEach(post => {
+                            const postCard = `
+                                <div class="post-card">
+                                    <h4>${post.text}</h4>
+                                    <p><strong>Autor:</strong> <a href="${post.author.linkedinUrl}" target="_blank">${post.author.name}</a></p>
+                                    <p><strong>Título:</strong> ${post.author.title}</p>
+                                    <p><strong>Data:</strong> ${post.createdAtString}</p>
+                                    <p><a href="${post.permalink}" target="_blank" class="btn btn-primary">Ver Post</a></p>
+                                </div>
+                            `;
+                            resultsDiv.innerHTML += postCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+
+                    // Ocultar o indicador de carregamento em caso de erro
+                    loadingDiv.style.display = 'none';
+                });
+        });
+
+        // Inicializar tooltips do Bootstrap
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Neural Futurista</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .point {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #1e90ff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+        }
+
+        .menu-content {
+            position: absolute;
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 20;
+            max-width: 300px;
+            text-align: center;
+            transform: translate(-50%, -50%);
+        }
+
+        .menu-content h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .menu-content p {
+            margin: 10px 0 0;
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <!-- Pontos do menu -->
+    <div class="point" id="point1" data-info="Item 1" style="left: 150px; top: 150px;"></div>
+    <div class="point" id="point2" data-info="Item 2" style="left: 300px; top: 150px;"></div>
+    <div class="point" id="point3" data-info="Item 3" style="left: 450px; top: 150px;"></div>
+    <div class="point" id="point4" data-info="Item 4" style="left: 600px; top: 150px;"></div>
+
+    <!-- Conteúdo do menu -->
+    <div class="menu-content" id="menu-content">
+        <h1 id="menu-title">Menu Item</h1>
+        <p id="menu-description">Descrição do item.</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const points = Array.from(document.querySelectorAll('.point'));
+        const pointObjects = [];
+        let draggingPoint = null;
+        let offsetX, offsetY;
+
+        // Define a classe para os pontos
+        class Point {
+            constructor(element, x, y) {
+                this.element = element;
+                this.x = x;
+                this.y = y;
+                this.vx = Math.random() * 2 - 1;
+                this.vy = Math.random() * 2 - 1;
+                this.updatePosition();
+            }
+
+            updatePosition() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Verifica as bordas e inverte a direção se necessário
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                this.element.style.left = `${this.x}px`;
+                this.element.style.top = `${this.y}px`;
+            }
+
+            render() {
+                this.updatePosition();
+            }
+        }
+
+        // Inicializa os pontos
+        points.forEach(point => {
+            const rect = point.getBoundingClientRect();
+            pointObjects.push(new Point(point, rect.left + rect.width / 2, rect.top + rect.height / 2));
+        });
+
+        function drawLine(x1, y1, x2, y2) {
+            ctx.strokeStyle = 'rgba(30, 144, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        function updateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const rects = pointObjects.map(p => ({
+                x: p.x,
+                y: p.y
+            }));
+
+            for (let i = 0; i < rects.length; i++) {
+                const rect1 = rects[i];
+                for (let j = i + 1; j < rects.length; j++) {
+                    const rect2 = rects[j];
+                    drawLine(rect1.x, rect1.y, rect2.x, rect2.y);
+                }
+            }
+        }
+
+        function animateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateLines();
+            requestAnimationFrame(animateLines);
+        }
+
+        animateLines();
+
+        function updatePoints() {
+            pointObjects.forEach(point => point.render());
+            updateLines();
+        }
+
+        function animate() {
+            updatePoints();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Adiciona a funcionalidade de arrastar e interagir com os pontos
+        points.forEach(point => {
+            point.addEventListener('mousedown', (event) => {
+                draggingPoint = point;
+                const rect = canvas.getBoundingClientRect();
+                offsetX = event.clientX - (rect.left + point.offsetLeft);
+                offsetY = event.clientY - (rect.top + point.offsetTop);
+                point.style.zIndex = 1000;
+            });
+
+            point.addEventListener('mouseup', () => {
+                draggingPoint = null;
+                point.style.zIndex = 10;
+            });
+
+            point.addEventListener('mousemove', (event) => {
+                if (draggingPoint) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = event.clientX - rect.left - offsetX;
+                    const y = event.clientY - rect.top - offsetY;
+                    draggingPoint.style.left = `${x}px`;
+                    draggingPoint.style.top = `${y}px`;
+                    const pointObject = pointObjects.find(p => p.element === draggingPoint);
+                    pointObject.x = x;
+                    pointObject.y = y;
+                }
+            });
+
+            point.addEventListener('click', (event) => {
+                const info = point.getAttribute('data-info');
+                const rect = point.getBoundingClientRect();
+                const top = rect.top + window.scrollY + rect.height / 2;
+                const left = rect.left + window.scrollX + rect.width / 2;
+
+                document.getElementById('menu-title').textContent = info;
+                document.getElementById('menu-description').textContent = `Descrição do ${info}.`;
+                document.getElementById('menu-content').style.top = `${top}px`;
+                document.getElementById('menu-content').style.left = `${left}px`;
+                document.getElementById('menu-content').style.display = 'block';
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!document.getElementById('menu-content').contains(event.target) && !event.target.classList.contains('point')) {
+                document.getElementById('menu-content').style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            updateLines();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Agentes🤖</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+        }
+
+        .menu,
+        .details {
+            background-color: #f0f0f0;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .menu {
+            width: 20%;
+        }
+
+        .main-area {
+            width: 60%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .details {
+            width: 20%;
+        }
+
+        .menu-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            cursor: move;
+            border-radius: 5px;
+        }
+
+        .dropped-item {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            cursor: move;
+            border-radius: 5px;
+        }
+
+        .remove-btn {
+            margin-left: 10px;
+            color: red;
+            cursor: pointer;
+        }
+
+        #newItemForm,
+        #editForm,
+        #renameForm {
+            margin-bottom: 20px;
+        }
+
+        #newItemInput,
+        #editInput,
+        #renameInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #editForm,
+        #renameForm {
+            display: none;
+        }
+
+        #playArea {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        .play-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .gpt-response {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .action-buttons {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons button {
+            margin-right: 10px;
+        }
+
+        .api-key-form input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu" id="menu">
+        <h2>Agentes</h2>
+        <div id="menuItems">
+            <!-- <div class="menu-item" draggable="true">Gerente</div>
+            <div class="menu-item" draggable="true">Pesquisador</div>
+            <div class="menu-item" draggable="true">Escritor</div>
+            <div class="menu-item" draggable="true">Publicador</div> -->
+        </div>
+    </div>
+
+    <div class="main-area" id="mainArea">
+        <div class="alert alert-info">
+            Este é um protótipo para testes, não coloque informações confidenciais e não esqueça de remover as API-KEYs
+            testadas após os testes.
+        </div>
+        <form id="newItemForm">
+            <input type="text" id="newItemInput" class="form-control" placeholder="Nome do novo item">
+            <button type="submit" class="btn btn-primary btn-block">Adicionar novo item</button>
+        </form>
+        <div class="action-buttons">
+            <button id="saveButton" class="btn btn-success">Salvar Configuração</button>
+            <button id="loadButton" class="btn btn-warning">Carregar Configuração</button>
+        </div>
+        <div class="api-key-form">
+            <input type="password" id="apiKeyInput" placeholder="Insira sua API-KEY" class="form-control">
+        </div>
+        <h2>Área Principal</h2>
+        <div id="droppedItems" class="well"></div>
+        <button id="playButton" class="btn btn-primary">Play</button>
+        <div id="playArea"></div>
+    </div>
+
+    <div class="details" id="details">
+        <h2>Detalhes</h2>
+        <p id="itemDetails"></p>
+        <button id="editButton" class="btn btn-info">Editar detalhes</button>
+        <button id="renameButton" class="btn btn-info">Renomear</button>
+        <form id="editForm">
+            <textarea id="editInput" rows="4" class="form-control"></textarea>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+        <form id="renameForm">
+            <input type="text" id="renameInput" placeholder="Novo nome" class="form-control">
+            <button type="submit" class="btn btn-primary">Salvar nome</button>
+        </form>
+    </div>
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        const menu = document.getElementById('menu');
+        const menuItems = document.getElementById('menuItems');
+        const mainArea = document.getElementById('mainArea');
+        const droppedItems = document.getElementById('droppedItems');
+        const itemDetails = document.getElementById('itemDetails');
+        const newItemForm = document.getElementById('newItemForm');
+        const newItemInput = document.getElementById('newItemInput');
+        const editButton = document.getElementById('editButton');
+        const editForm = document.getElementById('editForm');
+        const editInput = document.getElementById('editInput');
+        const renameButton = document.getElementById('renameButton');
+        const renameForm = document.getElementById('renameForm');
+        const renameInput = document.getElementById('renameInput');
+        const playButton = document.getElementById('playButton');
+        const playArea = document.getElementById('playArea');
+        const saveButton = document.getElementById('saveButton');
+        const loadButton = document.getElementById('loadButton');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+
+        let selectedItem = null;
+        let dragSrcEl = null;
+        let apiKey = '';
+
+        function createMenuItem(text) {
+            const newItem = document.createElement('div');
+            newItem.className = 'menu-item';
+            newItem.draggable = true;
+            newItem.textContent = text;
+            newItem.addEventListener('dragstart', function (e) {
+                e.dataTransfer.setData('text/plain', text);
+            });
+            return newItem;
+        }
+        newItemForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const newItemName = newItemInput.value.trim();
+            if (newItemName) {
+                const newItem = createMenuItem(newItemName);
+                menuItems.appendChild(newItem);
+                newItemInput.value = '';
+            }
+        });
+
+        mainArea.addEventListener('dragover', function (e) {
+            e.preventDefault();
+        });
+
+        mainArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('text');
+            const newItem = createDroppedItem(data);
+            droppedItems.appendChild(newItem);
+        });
+
+        function createDroppedItem(data) {
+            const newItem = document.createElement('div');
+            newItem.className = 'dropped-item';
+            newItem.textContent = data;
+            newItem.details = `Fale uma palavra sobre: "${data}". `;
+            newItem.originalDetails = newItem.details;
+            newItem.draggable = true;
+
+            const removeBtn = document.createElement('span');
+            removeBtn.textContent = ' ×';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = function (event) {
+                event.stopPropagation();
+                droppedItems.removeChild(newItem);
+                itemDetails.textContent = '';
+                editButton.style.display = 'none';
+                editForm.style.display = 'none';
+                renameButton.style.display = 'none';
+                renameForm.style.display = 'none';
+                selectedItem = null;
+            };
+
+            newItem.appendChild(removeBtn);
+            newItem.onclick = function () {
+                itemDetails.textContent = newItem.details;
+                editInput.value = newItem.details;
+                editButton.style.display = 'block';
+                renameButton.style.display = 'block';
+                selectedItem = newItem;
+            };
+
+            newItem.addEventListener('dragstart', function (e) {
+                e.dataTransfer.setData('text/plain', data);
+                dragSrcEl = this;
+            });
+
+            return newItem;
+        }
+
+        editButton.addEventListener('click', function () {
+            editForm.style.display = 'block';
+            renameForm.style.display = 'none';
+        });
+
+        renameButton.addEventListener('click', function () {
+            renameForm.style.display = 'block';
+            editForm.style.display = 'none';
+        });
+
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (selectedItem) {
+                selectedItem.details = editInput.value;
+                selectedItem.originalDetails = editInput.value; // Atualizar o originalDetails aqui
+                itemDetails.textContent = selectedItem.details;
+                editForm.style.display = 'none';
+            }
+        });
+
+        renameForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (selectedItem) {
+                selectedItem.textContent = renameInput.value;
+                selectedItem.appendChild(selectedItem.querySelector('.remove-btn'));
+                renameForm.style.display = 'none';
+            }
+        });
+
+        playButton.addEventListener('click', async function () {
+            const items = droppedItems.querySelectorAll('.dropped-item');
+            playArea.innerHTML = '';
+
+            let previousResponse = '';
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                const playItem = document.createElement('div');
+                playItem.className = 'play-item';
+
+                let prompt = item.originalDetails; // Use originalDetails instead of details
+                if (previousResponse) {
+                    prompt += ` Considere que a resposta anterior foi: "${previousResponse}".`;
+                }
+                const itemContent = document.createElement('p');
+                itemContent.textContent = `${item.textContent.replace('×', '')}: ${prompt}`;
+                playItem.appendChild(itemContent);
+
+                const gptResponse = document.createElement('div');
+                gptResponse.className = 'gpt-response';
+                gptResponse.textContent = 'Consultando GPT-4...';
+                playItem.appendChild(gptResponse);
+
+                playArea.appendChild(playItem);
+                try {
+                    const response = await fetchGPT4Response(prompt);
+                    gptResponse.textContent = response;
+                    previousResponse = response;
+                } catch (error) {
+                    gptResponse.textContent = 'Erro ao consultar GPT-4: ' + error.message;
+                    previousResponse = '';
+                }
+            }
+
+            if (items.length === 0) {
+                playArea.textContent = 'Nenhum item para reproduzir.';
+            }
+        });
+
+        async function fetchGPT4Response(prompt) {
+            const apiKey = apiKeyInput.value.trim(); // Certifique-se de que o apiKey está sendo capturado corretamente
+            if (!apiKey) {
+                throw new Error('API-KEY não está configurada.');
+            }
+
+            const API_URL = 'https://api.openai.com/v1/chat/completions';
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [
+                        { role: "system", content: "Você é um assistente útil que responde perguntas sobre ambientes e objetos." },
+                        { role: "user", content: prompt }
+                    ],
+                    max_tokens: 100
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro HTTP! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content.trim();
+        }
+
+        saveButton.addEventListener('click', function () {
+            const config = Array.from(droppedItems.children).map(item => ({
+                text: item.textContent.replace(' ×', ''),
+                details: item.details
+            }));
+            localStorage.setItem('config', JSON.stringify(config));
+            alert('Configuração salva!');
+        });
+
+        loadButton.addEventListener('click', function () {
+            const config = JSON.parse(localStorage.getItem('config'));
+            droppedItems.innerHTML = ''; // Limpar itens atuais
+            config.forEach(item => {
+                const newItem = createDroppedItem(item.text);
+                newItem.details = item.details;
+                droppedItems.appendChild(newItem);
+            });
+            alert('Configuração carregada!');
+        });
+
+        apiKeyInput.addEventListener('change', function () {
+            apiKey = apiKeyInput.value;
+            alert('API-KEY configurada!');
+        });
+    </script>
+</body>
+
+</html>

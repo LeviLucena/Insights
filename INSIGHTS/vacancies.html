@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Emprego👷v2.0</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .job-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .job-card h4 {
+            margin-top: 0;
+        }
+
+        .company-logo {
+            max-width: 50px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Busca de Emprego👷v2.0</h1>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="keywords">Palavras-chave</label>
+                <input type="text" id="keywords" class="form-control" placeholder="Digite palavras-chave" required>
+            </div>
+            <div class="form-group">
+                <label for="geo_code">Código Geográfico</label>
+                <select id="geo_code" class="form-control" required>
+                    <option value="all" selected>Todos os Países</option>
+                    <option value="100136563">Alemanha</option>
+                    <option value="103452281">Australia</option>
+                    <option value="106057199">Brasil</option>
+                    <option value="104562358">Canadá</option>
+                    <option value="103811036">China</option>
+                    <option value="103644278">Estados Unidos</option>
+                    <option value="104744246">França</option>
+                    <option value="102713980">Índia</option>
+                    <option value="100506914">Japão</option>
+                    <option value="102346613">Reino Unido</option>
+                    <!-- Adicione mais opções conforme necessário -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evita o envio do formulário
+
+            const keywords = document.getElementById('keywords').value;
+            const geo_code = document.getElementById('geo_code').value;
+
+            // Exibir o indicador de carregamento
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            const data = {
+                "keywords": keywords,
+                "geo_code": geo_code === "all" ? "" : parseInt(geo_code),
+                "date_posted": "Any time",
+                "experience_levels": [],
+                "company_ids": [],
+                "title_ids": [],
+                "onsite_remotes": [],
+                "functions": [],
+                "industries": [],
+                "job_types": [],
+                "sort_by": "Most relevant",
+                "easy_apply": "false",
+                "under_10_applicants": "false",
+                "start": 0
+            };
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify(data)
+            };
+
+            fetch('https://fresh-linkedin-profile-data.p.rapidapi.com/search-jobs', options)
+                .then(response => response.json())
+                .then(response => {
+                    const jobs = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    // Ocultar o indicador de carregamento
+                    loadingDiv.style.display = 'none';
+
+                    if (jobs.length > 0) {
+                        jobs.forEach(job => {
+                            const jobCard = `
+                                <div class="job-card">
+                                    <img src="${job.company_logo}" alt="${job.company}" class="company-logo">
+                                    <h4>${job.job_title}</h4>
+                                    <p><strong>Empresa:</strong> <a href="${job.company_linkedin_url}" target="_blank">${job.company}</a></p>
+                                    <p><strong>Localização:</strong> ${job.location}</p>
+                                    <p><strong>Data da Postagem:</strong> ${job.posted_time}</p>
+                                    <p><strong>Trabalho Remoto:</strong> ${job.remote}</p>
+                                    <p><strong>Salário:</strong> ${job.salary || 'Não especificado'}</p>
+                                    <p><a href="${job.job_url}" target="_blank" class="btn btn-primary">Ver Vaga</a></p>
+                                </div>
+                            `;
+                            resultsDiv.innerHTML += jobCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+
+                    // Ocultar o indicador de carregamento em caso de erro
+                    loadingDiv.style.display = 'none';
+                });
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

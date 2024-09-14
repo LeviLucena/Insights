@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights💡</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilo para o botão de iniciar áudio */
+        #audio-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        #audio-prompt button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main id="hero">
+        <video autoplay muted loop>
+            <source src="loading.mp4" type="video/mp4">
+            Seu navegador não suporta o formato de vídeo.
+        </video>
+
+        <div class="capa"></div>
+    </main>
+
+    <!-- <audio id="background-audio" loop>
+        <source src="audio.mp3" type="audio/mp3">
+        Seu navegador não suporta o formato de áudio.
+    </audio>-->
+
+    <!-- Prompt para iniciar o áudio 
+    <div id="audio-prompt">
+        <p>Para ouvir o áudio, por favor, clique no botão abaixo.</p>
+        <button onclick="startAudio()">Iniciar Áudio</button>
+    </div> -->
+
+    <script>
+        function startAudio() {
+            const audio = document.getElementById('background-audio');
+            const prompt = document.getElementById('audio-prompt');
+
+            // Reproduzir o áudio quando o usuário clicar no botão
+            audio.play().catch(error => {
+                console.log('Erro ao tentar reproduzir o áudio:', error);
+            });
+
+            // Ocultar o prompt depois que o áudio começar a tocar
+            prompt.style.display = 'none';
+        }
+
+        // Redirecionar para home.html após 14 segundos
+        setTimeout(() => {
+            window.location.href = 'home.html';
+        }, 12000); // 12000 milissegundos = 12 segundos
+    </script>
+</body>
+
+</html>

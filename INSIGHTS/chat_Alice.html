@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente IA</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Converse com Seu Assistente IA</h1>
+            <p>Digite sua mensagem abaixo e interaja com o assistente.</p>
+        </div>
+
+        <!-- Área onde o assistente IA será exibido -->
+        <div id="assistant-container" style="margin-top: 20px;">
+            <!-- O script do assistente IA será carregado aqui -->
+            <script type="module" src="https://agent.d-id.com/v1/index.js" data-name="did-agent" data-mode="fabio"
+                data-client-key="Z29vZ2xlLW9hdXRoMnwxMDU3MDc3NjY0NzI5NDk2MDQ0Njg6QkQ2WWs1dDJRWnN1Wlg5YWNDZ1Et"
+                data-agent-id="agt_UbzR_Shn" data-monitor="true">
+                </script>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

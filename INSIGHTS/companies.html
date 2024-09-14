@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados da Empresa no LinkedIn</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .post {
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .post img {
+            max-width: 100px;
+            border-radius: 50%;
+        }
+        .post a {
+            color: #0073b1; /* LinkedIn color */
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        async function fetchCompanyPosts(companyUrl) {
+            const url = `https://linkedin-data-scraper.p.rapidapi.com/company_updates?company_url=${encodeURIComponent(companyUrl)}&page=1&reposts=2&comments=2`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro ${response.status}: ${errorText}`);
+            }
+            return await response.json();
+        }
+
+        async function handleCompanySearch() {
+            const companyUrl = document.getElementById('companyUrl').value.trim();
+
+            if (!companyUrl) {
+                document.getElementById('companyPosts').innerHTML = 'Por favor, insira uma URL da empresa.';
+                return;
+            }
+
+            try {
+                const postsData = await fetchCompanyPosts(companyUrl);
+                if (postsData.success && postsData.posts && Array.isArray(postsData.posts)) {
+                    const posts = postsData.posts.map(post => `
+                        <div class="post">
+                            <div class="media">
+                                <div class="media-left">
+                                    <a href="${post.actor ? post.actor.actorLink : '#'}" target="_blank">
+                                        <img src="${post.actor ? post.actor.actorImage : ''}" alt="${post.actor ? post.actor.actorName : ''}">
+                                    </a>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        <a href="${post.actor ? post.actor.actorLink : '#'}" target="_blank">${post.actor ? post.actor.actorName : 'Desconhecido'}</a>
+                                        <small>${post.actor ? post.actor.actorSubDescription : ''}</small>
+                                    </h4>
+                                    <p>${post.postText}</p>
+                                    <a href="${post.postLink}" target="_blank">Ver postagem</a>
+                                    <p>Likes: ${post.socialCount.numLikes}, Comentários: ${post.socialCount.numComments}, Compartilhamentos: ${post.socialCount.numShares}</p>
+                                    <p>Publicado em: ${new Date(post.postedAt).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('companyPosts').innerHTML = posts;
+                } else {
+                    document.getElementById('companyPosts').innerHTML = 'Nenhuma postagem encontrada.';
+                }
+            } catch (error) {
+                document.getElementById('companyPosts').innerHTML = `Erro ao buscar postagens da empresa: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Dados da Empresa no LinkedIn</h1>
+        
+        <!-- Formulário de consulta -->
+        <div class="card">
+            <div class="card-header">Consulta de Postagens da Empresa</div>
+            <div class="card-body">
+                <input type="text" id="companyUrl" placeholder="Digite a URL da empresa no LinkedIn" class="form-control">
+                <button class="btn btn-primary" style="margin-top: 10px;" onclick="handleCompanySearch()">Buscar</button>
+                <div id="companyPosts" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

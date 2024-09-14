@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas de Empresas 🏢</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .job-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .job-card img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+
+        .help-icon {
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 14px;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Vagas de Empresas 🏢</h1>
+        <form id="companyJobsForm">
+            <div class="form-group">
+                <label for="companyIds">IDs das Empresas <span class="help-icon" data-toggle="tooltip"
+                        title="IDs das Empresas são identificadores únicos atribuídos às empresas no LinkedIn. Você pode encontrar esses IDs na URL do perfil da empresa ou em outros recursos de dados do LinkedIn. Insira múltiplos IDs separados por vírgula.">?</span></label>
+                <input type="text" id="companyIds" class="form-control" placeholder="Digite os IDs das empresas"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar Vagas</button>
+        </form>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('companyJobsForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evita o envio do formulário
+
+            const companyIds = document.getElementById('companyIds').value.split(',').map(id => id.trim());
+
+            // Exibir o indicador de carregamento
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'linkedin-api8.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                },
+                body: JSON.stringify({
+                    companyIds: companyIds,
+                    page: 1
+                })
+            };
+
+            fetch('https://linkedin-api8.p.rapidapi.com/company-jobs', options)
+                .then(response => response.json())
+                .then(response => {
+                    const jobs = response.data.items;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    // Ocultar o indicador de carregamento
+                    loadingDiv.style.display = 'none';
+
+                    if (jobs.length > 0) {
+                        jobs.forEach(job => {
+                            const jobCard = `
+                                <div class="job-card">
+                                    <h4>${job.title}</h4>
+                                    <p><strong>Empresa:</strong> <a href="${job.company.url}" target="_blank">${job.company.name}</a></p>
+                                    <p><strong>Localização:</strong> ${job.location}</p>
+                                    <p><strong>Data de Postagem:</strong> ${job.postDate}</p>
+                                    <p><a href="${job.url}" target="_blank" class="btn btn-primary">Ver Vaga</a></p>
+                                </div>
+                            `;
+                            resultsDiv.innerHTML += jobCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhuma vaga encontrada.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+
+                    // Ocultar o indicador de carregamento em caso de erro
+                    loadingDiv.style.display = 'none';
+                });
+        });
+
+        // Inicializar o tooltip
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

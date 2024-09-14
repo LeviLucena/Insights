@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        /* Estilo do corpo */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+
+        /* Estilo do vídeo de fundo */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Estilo do cabeçalho */
+        header {
+            background: rgba(24, 39, 124, 0.8);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        header img {
+            max-width: 100%;
+            height: auto;
+            width: 400px;
+            /* Reduzido para melhor responsividade */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilo do container */
+        .container {
+            margin-top: 20px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Estilo dos cartões */
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(1px);
+            transition: transform 0.4s, box-shadow 0.4s;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-header {
+            background: rgba(24, 39, 124, 0.7);
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #fff;
+        }
+
+        .card-body {
+            padding: 20px;
+            flex: 1 1 auto;
+        }
+
+        .card-body a {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card-body a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo do rodapé */
+        footer {
+            background: rgba(24, 39, 124, 0.9);
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        p {
+            text-align: justify;
+        }
+
+        /* Media Queries para ajustes responsivos */
+        @media (max-width: 767px) {
+            header img {
+                width: 200px;
+                /* Reduzir a largura da imagem em dispositivos pequenos */
+            }
+
+            .card {
+                height: auto;
+                /* Permitir que o cartão ajuste a altura conforme o conteúdo */
+            }
+
+            .carousel-control {
+                width: 5%;
+                /* Ajustar a largura dos controles do carrossel em dispositivos pequenos */
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991px) {
+            header img {
+                width: 250px;
+                /* Ajuste da largura da imagem para tablets em orientação retrato */
+            }
+        }
+    </style>
+</head>
+
+<body style="overflow: auto;">
+    <!-- Vídeo de fundo -->
+    <video class="video-background" autoplay muted loop>
+        <source src="video10.mp4" type="video/mp4">
+        Seu navegador não suporta o formato de vídeo.
+    </video>
+
+    <!-- Cabeçalho -->
+    <header>
+        <img src="Logo.png" alt="Logotipo">
+    </header>
+
+    <!-- Carrossel de cartões -->
+    <div id="carousel-cards" class="carousel slide" data-ride="carousel">
+        <!-- Indicadores -->
+        <ol class="carousel-indicators">
+            <li data-target="#carousel-cards" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-cards" data-slide-to="1"></li>
+        </ol>
+
+        <!-- Slides do carrossel -->
+        <div class="carousel-inner">
+            <!-- Primeira página de cartões -->
+            <div class="item active">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <div class="card">
+                                <div class="card-header">Gerenciar Agentes🤖</div>
+                                <div class="card-body">
+                                    <p>🛠️ Administre uma interface intuitiva para criar e gerenciar seus agentes. Com
+                                        essa
+                                        ferramenta, você pode adicionar, mover, editar e remover agentes com facilidade.
+                                        Além disso,
+                                        configure uma chave API para interagir com o GPT-4 e exibir as respostas geradas
+                                        diretamente
+                                        para seus itens.</p>
+
+                                    <a href="agents.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Consulta com Agentes</a>
+                                    <script>
+                                        function openCenteredWindow(url, width, height) {
+                                            var left = (window.innerWidth / 2) - (width / 2);
+                                            var top = (window.innerHeight / 2) - (height / 2);
+                                            window.open(url, 'mywin', 'left=' + left + ',top=' + top + ',width=' + width + ',height=' + height + ',toolbar=1,resizable=0');
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Pesquisa Rápida🔎</div>
+                                <div class="card-body">
+                                    <p>🔍 Realize consultas ágeis e eficazes com a API Pesquisa Rápida da SERPER.
+                                        Obtenha resultados
+                                        de busca do Google de maneira rápida e intuitiva, geralmente em poucos segundos.
+                                        Ideal para
+                                        quem precisa de respostas rápidas e precisas sem complicações.</p>
+
+                                    <a href="search.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Pesquisa Rápida</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Lugares📍</div>
+                                <div class="card-body">
+                                    <p>🌍 Descubra facilmente localizações de empresas com nossa ferramenta de busca,
+                                        usando a API
+                                        SERPER Places. Encontre rapidamente informações detalhadas, como endereço,
+                                        telefone, site e
+                                        avaliações, tudo em um único lugar. Experimente a eficiência e a precisão.</p>
+
+                                    <a href="places.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de Lugares</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Consulta de Palavras💬</div>
+                                <div class="card-body">
+                                    <p>🔎 Utilize nossa ferramenta para consultar e analisar palavras-chave relacionadas
+                                        aos
+                                        clientes cadastrados. Descubra informações detalhadas e insights valiosos sobre
+                                        como essas
+                                        palavras estão associadas aos perfis e interações dos clientes. Entenda o
+                                        impacto de certas.
+                                    </p>
+                                    <a href="words.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Acessar
+                                        Consulta</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Consultar Notícias📰</div>
+                                <div class="card-body">
+                                    <p>📢 Mantenha-se atualizado com as últimas notícias sobre temas específicos de
+                                        forma rápida e
+                                        eficiente. Insira um termo de pesquisa e sua chave API para acessar uma lista
+                                        atualizada de
+                                        notícias relevantes, incluindo títulos, resumos e links para mais detalhes.</p>
+
+                                    <a href="news.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Pesquisa de Notícias</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Perfil🎓</div>
+                                <div class="card-body">
+                                    <p>🎯 Com essa interface intuitiva, você pode explorar e acessar perfis
+                                        profissionais que
+                                        correspondem aos seus
+                                        critérios de busca. Configure os parâmetros da sua pesquisa, como nome, empresa,
+                                        título
+                                        do trabalho, localização e palavra-chave e visualize os resultados
+                                        instantaneamente.</p>
+                                    <a href="profile.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de Perfis</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Análise de Perfil💼</div>
+                                <div class="card-body">
+                                    <p>📋 Explore a fundo perfis do LinkedIn para obter informações detalhadas sobre
+                                        suas postagens
+                                        recentes, encontrar perfis semelhantes e descobrir as habilidades, insights e
+                                        atividades.Se
+                                        você precisa de insights sobre a atividade de um perfil, encontre-os aqui.
+                                    </p>
+                                    <a href="employee.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Acessar
+                                        Análise de
+                                        Perfis</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Vagas👷</div>
+                                <div class="card-body">
+                                    <p>🌟 Encontre a vaga dos seus sonhos com nossa ferramenta de busca avançada.
+                                        Utilize nossa
+                                        interface intuitiva para procurar oportunidades de emprego em diferentes setores
+                                        e
+                                        localizações. Você pode acessar uma lista de vagas e buscar informações
+                                        relevantes.</p>
+
+                                    <a href="jobs.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de
+                                        Vagas</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Repita o mesmo para os outros cartões, adaptando a classe col-md-3 para col-sm-6 e col-xs-12 quando necessário -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segunda página de cartões -->
+            <div class="item">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Emprego👷v2.0</div>
+                                <div class="card-body">
+                                    <p>🌟 Encontre a vaga dos seus sonhos com nossa ferramenta de busca avançada.
+                                        Utilize nossa
+                                        interface intuitiva para procurar oportunidades de emprego em diferentes setores
+                                        e
+                                        localizações. Você pode acessar uma lista de vagas e buscar informações
+                                        relevantes.</p>
+                                    <a href="vacancies.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de
+                                        Emprego</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Empresas 🏪</div>
+                                <div class="card-body">
+                                    <p>🔍 Encontre empresas de diversas indústrias de forma rápida e eficiente. Insira o
+                                        nome da empresa ou selecione um setor para descobrir informações detalhadas como
+                                        descrição, número de funcionários, seguidores, endereço da sede, e muito mais.
+                                    </p>
+                                    <a href="company.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de
+                                        Vagas</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Vagas de Empresas 🏢</div>
+                                <div class="card-body">
+                                    <p>💼 Explore as oportunidades de emprego disponíveis nas empresas que você está
+                                        interessado.
+                                        Utilize esta página para procurar vagas atuais em diferentes empresas no
+                                        Linkedin,
+                                        visualizando detalhes como título da vaga, localização, e data de postagem. Você
+                                        pode facilmente encontrar uma vaga.</p>
+                                    <a href="company-vacancies.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de
+                                        Vagas</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Cotações Tempo Real 📈</div>
+                                <div class="card-body">
+                                    <p>💲 Mantenha-se atualizado com as últimas cotações financeiras do mercado!
+                                        acompanhe em tempo real os preços de ações e índices
+                                        de diversas empresas e ativos com gráficos dinâmicos e dados
+                                        atualizados a cada intervalo para tomar decisões sobre
+                                        investimentos.</p>
+                                    <a href="market.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Cotação em Tempo Real</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Gerador de Imagens IA 🎨</div>
+                                <div class="card-body">
+                                    <p>🎨🖌️ Transforme suas ideias em imagens realistas com facilidade! Utilizando a
+                                        tecnologia avançada para criar imagens a partir de
+                                        qualquer descrição textual que você fornecer. Basta inserir uma descrição
+                                        detalhada, clicar no botão "Gerar Imagem".</p>
+                                    <a href="AI-Text-to-image.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Geração de Imagens</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Posts e Comentários 💬</div>
+                                <div class="card-body">
+                                    <p>💬 Utilize esta página para explorar discussões, opiniões e interações que podem
+                                        ajudar a entender melhor a atividade de um perfil específico no Linkedin. Você
+                                        pode acessar
+                                        informações detalhadas sobre cada post e comentário, incluindo autor, data e
+                                        links diretos para as postagens.</p>
+                                    <a href="posts.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Explore
+                                        Discussões e Opiniões</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Chat com GPT-4 🧠🇦🇮</div>
+                                <div class="card-body">
+                                    <p>🔗 Explore rapidamente informações detalhadas de diferentes
+                                        setores. Com nosso chat, você pode inserir o nome da empresa ou escolher um
+                                        setor para obter dados como descrição, número de funcionários, seguidores e
+                                        localização da sede, entre outros.</p>
+                                    <a href="chat.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Conversa</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">Busca de Empresas 🏢</div>
+                                <div class="card-body">
+                                    <p>🔍 Encontre empresas de diversas indústrias de forma rápida e eficiente. Insira o
+                                        nome da empresa ou selecione um setor para descobrir informações detalhadas como
+                                        descrição, número de funcionários, seguidores, endereço da sede, e muito mais.
+                                    </p>
+                                    <a href="company.html"
+                                        onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                                        Busca de
+                                        Vagas</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Repita o mesmo para os outros cartões, adaptando a classe col-md-3 para col-sm-6 e col-xs-12 quando necessário -->
+                    </div>
+                </div>
+            </div>
+            <!-- Adapte o mesmo para os outros cartões conforme acima -->
+        </div>
+
+        <!-- Controles do carrossel -->
+        <a class="left carousel-control" href="#carousel-cards" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control" href="#carousel-cards" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Future Vision AI. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function openCenteredWindow(url, width, height) {
+            var left = (screen.width - width) / 2;
+            var top = (screen.height - height) / 2;
+            window.open(url, '_blank', 'toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
+        }
+    </script>
+</body>
+
+</html>

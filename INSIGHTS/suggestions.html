@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendações no LinkedIn</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .recommendation-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .recommendation-card h4 {
+            margin-top: 0;
+        }
+
+        /* Estilo para o indicador de carregamento */
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Recomendações Recebidas no LinkedIn</h1>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="linkedin_url">URL do Perfil no LinkedIn</label>
+                <input type="text" id="linkedin_url" class="form-control"
+                    placeholder="Digite a URL do perfil no LinkedIn" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar Recomendações</button>
+        </form>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando resultados, por favor aguarde...</p>
+        </div>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Evita o envio do formulário
+
+            const linkedinUrl = encodeURIComponent(document.getElementById('linkedin_url').value);
+
+            // Exibir o indicador de carregamento
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'block';
+
+            const url = `https://fresh-linkedin-profile-data.p.rapidapi.com/get-recommendations-received?linkedin_url=${linkedinUrl}`;
+
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'fresh-linkedin-profile-data.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                }
+            };
+
+            fetch(url, options)
+                .then(response => response.json())
+                .then(response => {
+                    const recommendations = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '';
+
+                    // Ocultar o indicador de carregamento
+                    loadingDiv.style.display = 'none';
+
+                    if (recommendations && recommendations.length > 0) {
+                        recommendations.forEach(recommendation => {
+                            const recommendationCard = `
+                                <div class="recommendation-card">
+                                    <h4>Recomendação de <a href="${recommendation.profile_url}" target="_blank">${recommendation.profile_url}</a></h4>
+                                    <p>${recommendation.text}</p>
+                                </div>
+                            `;
+                            resultsDiv.innerHTML += recommendationCard;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p>Nenhuma recomendação encontrada.</p>';
+                    }
+                })
+                .catch(err => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+
+                    // Ocultar o indicador de carregamento em caso de erro
+                    loadingDiv.style.display = 'none';
+                });
+        });
+    </script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

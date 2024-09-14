@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.capa {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(28, 28, 29, 0.6);
+    /* Ajuste a opacidade conforme necessário */
+    z-index: 1;
+    mix-blend-mode: overlay;
+}
+
+.promo {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #f3f3f3;
+    padding: 20px;
+    max-width: 90%;
+    width: 600px;
+    /* Largura máxima para a promoção */
+}
+
+.promo h1 {
+    font-size: 2.5rem;
+    /* Ajustado para melhor responsividade */
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.promo p {
+    font-size: 1.5rem;
+    /* Ajustado para melhor responsividade */
+    margin-bottom: 20px;
+    font-weight: 900;
+}
+
+button {
+    display: inline-block;
+    border: none;
+    height: 50px;
+    border-radius: 30px;
+    padding: 10px 0;
+    width: 200px;
+    background-color: #f5be09;
+    font-size: 1.2rem;
+    /* Ajustado para melhor responsividade */
+    color: #3f3f3f;
+    font-weight: 800;
+    transition: 150ms;
+    margin-top: 20px;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-5px);
+}
+
+/* Media Queries para ajustes responsivos */
+@media (max-width: 768px) {
+    .promo h1 {
+        font-size: 2rem;
+    }
+
+    .promo p {
+        font-size: 1.2rem;
+    }
+
+    button {
+        width: 150px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo h1 {
+        font-size: 1.5rem;
+    }
+
+    .promo p {
+        font-size: 1rem;
+    }
+
+    button {
+        width: 120px;
+        font-size: 0.9rem;
+    }
+}

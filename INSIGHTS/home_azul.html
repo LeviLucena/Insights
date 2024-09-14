@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(24, 39, 124, 1) 0%, rgba(44, 62, 80, 1) 100%);
+        }
+
+        header {
+            background: rgba(24, 39, 124, 0.9);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        header img {
+            max-width: 100%;
+            /* Garante que a imagem não ultrapasse a largura do contêiner */
+            height: auto;
+            /* Mantém a proporção da imagem */
+            width: 400px;
+            /* Define a largura desejada */
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+            /* Defina uma altura fixa para todos os cartões */
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-header {
+            background: rgba(24, 39, 124, 0.7);
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            flex: 0 0 auto;
+            /* Impede que o cabeçalho encolha */
+        }
+
+        .card-body {
+            padding: 20px;
+            flex: 1 1 auto;
+            /* Permite que o corpo do cartão ocupe o restante do espaço */
+        }
+
+        .card-body a {
+            color: #1e90ff;
+            text-decoration: none;
+        }
+
+        .card-body a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: rgba(24, 39, 124, 0.9);
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        p {
+            text-align: justify;
+        }
+    </style>
+</head>
+
+<body>
+
+    </main>
+    <header>
+        <img src="Logo.png" alt="Logotipo">
+        <!--<h1>Página Inicial</h1>-->
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Gerenciar Agentes🤖</div>
+                    <div class="card-body">
+                        <p>🛠️ Administre uma interface intuitiva para criar e gerenciar seus agentes. Com essa
+                            ferramenta, você pode adicionar, mover, editar e remover agentes com facilidade. Além disso,
+                            configure uma chave API para interagir com o GPT-4 e exibir as respostas geradas diretamente
+                            para seus itens.</p>
+                        <p>🔧 Aproveite a flexibilidade para personalizar e otimizar a interação com seus agentes,
+                            garantindo uma experiência eficiente e personalizada.</p>
+                        <a href="crew.html" onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                            Consulta com Agentes</a>
+                        <script>
+                            function openCenteredWindow(url, width, height) {
+                                // Calcula a posição central
+                                var left = (window.innerWidth / 2) - (width / 2);
+                                var top = (window.innerHeight / 2) - (height / 2);
+
+                                // Abre a nova janela
+                                window.open(url, 'mywin',
+                                    'left=' + left +
+                                    ',top=' + top +
+                                    ',width=' + width +
+                                    ',height=' + height +
+                                    ',toolbar=1,resizable=0'
+                                );
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Pesquisa Rápida🔎</div>
+                    <div class="card-body">
+                        <p>🔍 Realize consultas ágeis e eficazes com a API Pesquisa Rápida da SERPER. Obtenha resultados
+                            de busca do Google de maneira rápida e intuitiva, geralmente em poucos segundos. Ideal para
+                            quem precisa de respostas rápidas e precisas sem complicações.</p>
+                        <p>🚀 Experimente a eficiência da nossa API para obter as informações que você precisa em um
+                            tempo recorde!</p>
+                        <a href="search.html" onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                            Pesquisa Rápida</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Busca de Lugares📍</div>
+                    <div class="card-body">
+                        <p>🌍 Descubra facilmente localizações de empresas com nossa ferramenta de busca, usando a API
+                            SERPER Places. Encontre rapidamente informações detalhadas, como endereço, telefone, site e
+                            avaliações, tudo em um único lugar. Experimente a eficiência e a precisão da nossa busca em
+                            poucos segundos!</p>
+                        <p>🔎 Insira o nome ou tipo de empresa e obtenha resultados completos e atualizados.</p>
+                        <a href="places.html" onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                            Busca de Lugares</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Consultar Notícias📰</div>
+                    <div class="card-body">
+                        <p>🔍 Mantenha-se atualizado com as últimas notícias sobre temas específicos de forma rápida e
+                            eficiente. Insira um termo de pesquisa e sua chave API para acessar uma lista atualizada de
+                            notícias relevantes, incluindo títulos, resumos e links para mais detalhes.</p>
+                        <p>🌐 Descubra as tendências mais recentes e informações valiosas com nossa ferramenta de busca
+                            de notícias.</p>
+                        <a href="news.html" onclick="openCenteredWindow(this.href, 1200, 600); return false;">Iniciar
+                            Pesquisa de Notícias</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Consulta de Palavras💬</div>
+                    <div class="card-body">
+                        <p>🔎 Utilize nossa ferramenta para consultar e analisar palavras-chave relacionadas aos
+                            clientes cadastrados. Descubra informações detalhadas e insights valiosos sobre como essas
+                            palavras estão associadas aos perfis e interações dos clientes.</p>
+                        <p>📈 Se você deseja entender melhor a presença e o impacto de certas palavras-chave em seu
+                            banco de dados, nossa ferramenta fornece uma análise detalhada na tomada de decisões
+                            estratégicas.</p>
+                        <a href="words.html" onclick="openCenteredWindow(this.href, 1200, 600); return false;">Acessar
+                            Consulta</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Consulta de Postagens, Perfis Semelhantes e Habilidades💼</div>
+                    <div class="card-body">
+                        <p>🔎 Explore a fundo perfis do LinkedIn para obter informações detalhadas sobre suas postagens
+                            recentes, encontrar perfis semelhantes e descobrir as habilidades destacadas.</p>
+                        <p>📊 Se você precisa de insights sobre a atividade de um perfil, encontrar perfis com
+                            interesses semelhantes ou analisar habilidades e competências, tudo isso está ao seu
+                            alcance.</p>
+                        <a href="employee.html"
+                            onclick="openCenteredWindow(this.href, 1200, 600); return false;">Acessar Análise de
+                            Perfis</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Future Vision AI. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+
+</html>

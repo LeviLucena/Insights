@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotações Financeiras em Tempo Real</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+
+        .timer {
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Cotações Financeiras em Tempo Real</h1>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando dados, por favor aguarde...</p>
+        </div>
+
+        <div class="card">
+            <h4>Cotações Atuais</h4>
+            <div id="stockData"></div>
+        </div>
+
+        <div class="card">
+            <h4>Gráfico das Cotações</h4>
+            <div class="chart-container">
+                <canvas id="stockChart"></canvas>
+            </div>
+        </div>
+
+        <div id="timer" class="timer"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const stockDataDiv = document.getElementById('stockData');
+            const loadingDiv = document.getElementById('loading');
+            const stockChartCanvas = document.getElementById('stockChart').getContext('2d');
+            const timerDiv = document.getElementById('timer');
+
+            // Inicializar o gráfico
+            const stockChart = new Chart(stockChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Tempo'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Preço (USD)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Lista de IDs das ações
+            const stockIds = [612888, 16123, 12345, 67890]; // Adicione os IDs desejados aqui
+
+            // Intervalo de atualização (10 minutos = 600000 milissegundos)
+            const updateInterval = 600000;
+            let nextUpdate = new Date().getTime() + updateInterval;
+
+            function fetchStockData() {
+                // Exibir o indicador de carregamento
+                loadingDiv.style.display = 'block';
+
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-host': 'seeking-alpha.p.rapidapi.com',
+                        'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                    }
+                };
+
+                const url = `https://seeking-alpha.p.rapidapi.com/market/get-realtime-quotes?sa_ids=${stockIds.join(',')}`;
+
+                fetch(url, options)
+                    .then(response => response.json())
+                    .then(data => {
+                        const quotes = data.real_time_quotes;
+                        const now = new Date().toLocaleTimeString();
+
+                        // Atualizar a div com as cotações
+                        stockDataDiv.innerHTML = quotes.map(quote => `
+                            <p><strong>${quote.symbol}</strong>: Último preço: $${quote.last} (Alta: $${quote.high}, Baixa: $${quote.low})</p>
+                        `).join('');
+
+                        // Limpar dados do gráfico
+                        stockChart.data.labels.push(now);
+                        quotes.forEach(quote => {
+                            let dataset = stockChart.data.datasets.find(ds => ds.label === quote.symbol);
+                            if (!dataset) {
+                                dataset = {
+                                    label: quote.symbol,
+                                    data: [],
+                                    borderColor: getRandomColor(),
+                                    backgroundColor: 'rgba(0, 0, 0, 0)',
+                                    borderWidth: 2
+                                };
+                                stockChart.data.datasets.push(dataset);
+                            }
+                            dataset.data.push(quote.last);
+                        });
+
+                        stockChart.update();
+
+                        // Ocultar o indicador de carregamento
+                        loadingDiv.style.display = 'none';
+
+                        // Atualizar o próximo horário de atualização
+                        nextUpdate = new Date().getTime() + updateInterval;
+                    })
+                    .catch(err => {
+                        stockDataDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                        loadingDiv.style.display = 'none';
+                    });
+            }
+
+            function getRandomColor() {
+                // Gera uma cor aleatória para cada linha do gráfico
+                return `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`;
+            }
+
+
+
+            // Fetch initial data
+            fetchStockData();
+
+            // Atualiza o timer a cada segundo
+            // Fetch data every 60 seconds
+            // 1 Minutos = 60000 Milissegundos
+            // 5 Minutos = 300000 Milissegundos
+            // 10 Minutos = 600000 Milissegundos
+            // 30 Minutos = 1800000 Milissegundos
+            setInterval(updateTimer, 6000);
+        });
+    </script>
+</body>
+
+</html>

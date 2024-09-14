@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extração de Texto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Extração de Texto</h1>
+
+        <!-- Formulário de envio de texto -->
+        <div class="card">
+            <h4>Enviar Texto para Extração</h4>
+            <form id="textForm">
+                <div class="form-group">
+                    <label for="textInput">Texto:</label>
+                    <textarea id="textInput" class="form-control" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando dados, por favor aguarde...</p>
+        </div>
+
+        <!-- Resultados -->
+        <div id="results" class="card">
+            <h4>Resultados da Extração</h4>
+            <div id="extractedData"></div>
+            <div id="stats"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const form = document.getElementById('textForm');
+            const textInput = document.getElementById('textInput');
+            const extractedDataDiv = document.getElementById('extractedData');
+            const statsDiv = document.getElementById('stats');
+            const loadingDiv = document.getElementById('loading');
+
+            const url = 'https://ai-textraction.p.rapidapi.com/textraction';
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'ai-textraction.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                }
+            };
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const text = textInput.value;
+                const requestBody = JSON.stringify({
+                    text: text,
+                    entities: [
+                        { var_name: "first_name", type: "string", description: "first name of the person" },
+                        { var_name: "last_name", type: "string", description: "last name of the person" },
+                        { var_name: "years_of_experience", type: "integer", description: "years of experience" },
+                        { var_name: "programming_languages", type: "array[string]", description: "programming languages experienced with" },
+                        { var_name: "hobbies", type: "array[string]", description: "hobbies" }
+                    ]
+                });
+
+                // Exibir o indicador de carregamento
+                loadingDiv.style.display = 'block';
+
+                fetch(url, {
+                    ...options,
+                    body: requestBody
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Verifique a estrutura real da resposta
+
+                        const { first_name, last_name, years_of_experience, programming_languages, hobbies, stats } = data;
+
+                        // Atualizar a div com os dados extraídos
+                        extractedDataDiv.innerHTML = `
+                            <p><strong>Nome:</strong> ${first_name} ${last_name}</p>
+                            <p><strong>Anos de Experiência:</strong> ${years_of_experience}</p>
+                            <p><strong>Linguagens de Programação:</strong> ${programming_languages.join(', ')}</p>
+                            <p><strong>Hobbies:</strong> ${hobbies.join(', ')}</p>
+                        `;
+
+                        // Atualizar a div com os stats
+                        statsDiv.innerHTML = `
+                            <p><strong>Características de Texto:</strong> ${stats.n_text_characters}</p>
+                            <p><strong>Entidades Extraídas:</strong> ${stats.n_entities}</p>
+                            <p><strong>Tokens Usados:</strong> ${stats.n_tokens_used}</p>
+                        `;
+
+                        // Ocultar o indicador de carregamento
+                        loadingDiv.style.display = 'none';
+                    })
+                    .catch(err => {
+                        extractedDataDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                        statsDiv.innerHTML = '';
+                        loadingDiv.style.display = 'none';
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>

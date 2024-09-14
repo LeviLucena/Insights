@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Lugares📍</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4a90e2;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .form-inline {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            background-color: #4a90e2;
+            border-color: #4a90e2;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #357ab7;
+            border-color: #357ab7;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .result-item {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .result-item h2 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .result-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .result-item a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+        .result-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Busca de Lugares📍</h1>
+        </div>
+    </header>
+    <div class="container">
+        <form id="search-form" class="form-inline">
+            <div class="form-group">
+                <input type="text" id="query" class="form-control input-lg" placeholder="Digite sua busca..." required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="apiKey" class="form-control input-lg" placeholder="Insira sua API-KEY" required>
+            </div>
+            <button type="button" class="btn btn-primary btn-lg" onclick="search()">Buscar</button>
+        </form>
+        <div id="results"></div>
+    </div>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        async function search() {
+            const query = document.getElementById('query').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const endpoint = 'https://google.serper.dev/search';
+
+            if (!query || !apiKey) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const myHeaders = new Headers();
+            myHeaders.append("X-API-KEY", apiKey);
+            myHeaders.append("Content-Type", "application/json");
+
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: JSON.stringify({
+                    q: query,
+                    gl: "br",
+                    hl: "pt-br",
+                    type: "places"
+                }),
+                redirect: 'follow'
+            };
+
+            try {
+                const response = await fetch(endpoint, requestOptions);
+                const result = await response.json();
+                displayResults(result);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `<p class="text-danger">Ocorreu um erro: ${error.message}</p>`;
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (data.places && data.places.length > 0) {
+                data.places.forEach(place => {
+                    const placeDiv = document.createElement('div');
+                    placeDiv.classList.add('result-item');
+                    placeDiv.innerHTML = `
+                        <h2>${place.title}</h2>
+                        <p><strong>Endereço:</strong> ${place.address}</p>
+                        <p><strong>Telefone:</strong> ${place.phoneNumber}</p>
+                        <p><strong>Categoria:</strong> ${place.category}</p>
+                        <p><strong>Avaliação:</strong> ${place.rating} (${place.ratingCount} avaliações)</p>
+                        <p><strong>Website:</strong> <a href="${place.website}" target="_blank">${place.website}</a></p>
+                    `;
+                    resultsDiv.appendChild(placeDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

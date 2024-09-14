@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dividendos e Investimentos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Dividendos e Investimentos</h1>
+
+        <!-- Indicador de carregamento -->
+        <div id="loading" class="loading">
+            <img src="https://i.imgur.com/llF5iyg.gif" alt="Carregando...">
+            <p>Carregando dados, por favor aguarde...</p>
+        </div>
+
+        <div class="card">
+            <h4>Dividendos Tendência</h4>
+            <div id="trendingDividends"></div>
+        </div>
+
+        <div class="card">
+            <h4>Aumentos de Dividendos</h4>
+            <div id="dividendIncreases"></div>
+        </div>
+
+        <div class="card">
+            <h4>Próximas Datas de Ex-Dividendo</h4>
+            <div id="upcomingExdates"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const trendingDividendsDiv = document.getElementById('trendingDividends');
+            const dividendIncreasesDiv = document.getElementById('dividendIncreases');
+            const upcomingExdatesDiv = document.getElementById('upcomingExdates');
+            const loadingDiv = document.getElementById('loading');
+
+            const url = 'https://seeking-alpha.p.rapidapi.com/market/get-dividend-investing';
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-host': 'seeking-alpha.p.rapidapi.com',
+                    'x-rapidapi-key': 'ea8f2cf512msh9fd1edcfe085f26p12c4b4jsna8e74992509e'
+                }
+            };
+
+            function fetchDividendData() {
+                // Exibir o indicador de carregamento
+                loadingDiv.style.display = 'block';
+
+                fetch(url, options)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Verifique a estrutura real da resposta
+
+                        // Verificar e usar a estrutura real dos dados
+                        const trendingDividends = data.attributes?.trending_dividend_stocks || [];
+                        const dividendIncreases = data.attributes?.dividend_increases || [];
+                        const upcomingExdates = data.attributes?.upcoming_exdates || [];
+
+                        // Atualizar a div com os dividendos
+                        trendingDividendsDiv.innerHTML = `
+                            <ul>
+                                ${trendingDividends.map(stock => `
+                                    <li><strong>${stock.name}</strong> (${stock.slug}): Rendimento de Dividendo: ${stock.div_yield_fwd.toFixed(2)}%</li>
+                                `).join('')}
+                            </ul>
+                        `;
+
+                        dividendIncreasesDiv.innerHTML = `
+                            <ul>
+                                ${dividendIncreases.map(stock => `
+                                    <li><strong>${stock.name}</strong> (${stock.slug})</li>
+                                `).join('')}
+                            </ul>
+                        `;
+
+                        upcomingExdatesDiv.innerHTML = `
+                            <ul>
+                                ${upcomingExdates.map(stock => `
+                                    <li><strong>${stock.name}</strong> (${stock.slug}): ${stock.date}</li>
+                                `).join('')}
+                            </ul>
+                        `;
+
+                        // Ocultar o indicador de carregamento
+                        loadingDiv.style.display = 'none';
+                    })
+                    .catch(err => {
+                        trendingDividendsDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                        dividendIncreasesDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                        upcomingExdatesDiv.innerHTML = `<div class="alert alert-danger" role="alert">Erro ao buscar dados: ${err.message}</div>`;
+                        loadingDiv.style.display = 'none';
+                    });
+            }
+
+            fetchDividendData();
+        });
+    </script>
+</body>
+
+</html>

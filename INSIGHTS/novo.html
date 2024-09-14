@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Vídeos com SERPER API</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            border-bottom: #ccc 1px solid;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .video-item {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .video-item h2 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .video-item p {
+            margin: 0;
+        }
+        .video-item a {
+            color: #1e90ff;
+            text-decoration: none;
+        }
+        .video-item a:hover {
+            text-decoration: underline;
+        }
+        .video-item img {
+            max-width: 200px;
+            margin-right: 15px;
+        }
+        .video-meta {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Busca de Vídeos com SERPER API</h1>
+        </div>
+    </header>
+    <div class="container">
+        <form id="search-form">
+            <div class="form-group">
+                <label for="api-key">Chave da API SERPER:</label>
+                <input type="text" id="api-key" class="form-control" placeholder="Insira sua chave da API aqui" required>
+            </div>
+            <div class="form-group">
+                <label for="api-endpoint">Endpoint da API:</label>
+                <input type="text" id="api-endpoint" class="form-control" placeholder="Insira o endpoint da API aqui" value="https://api.serper.com/search" required>
+            </div>
+            <div class="form-group">
+                <label for="query">Digite o termo de busca:</label>
+                <input type="text" id="query" class="form-control" placeholder="Digite um termo para buscar vídeos..." required>
+            </div>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+        <hr>
+        <div id="video-results"></div>
+    </div>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        // Função para exibir os resultados dos vídeos
+        function displayVideoResults(data) {
+            const videoResultsDiv = document.getElementById('video-results');
+            videoResultsDiv.innerHTML = '';
+
+            if (data.videos && data.videos.length > 0) {
+                data.videos.forEach(video => {
+                    const videoDiv = document.createElement('div');
+                    videoDiv.classList.add('video-item');
+                    videoDiv.innerHTML = `
+                        <h2><a href="${video.link}" target="_blank">${video.title}</a></h2>
+                        <p><img src="${video.imageUrl}" alt="${video.title}"><strong>Fonte:</strong> ${video.source}</p>
+                        <p><strong>Snippet:</strong> ${video.snippet}</p>
+                        <p><strong>Duração:</strong> ${video.duration} | <strong>Data:</strong> ${video.date}</p>
+                    `;
+                    videoResultsDiv.appendChild(videoDiv);
+                });
+            } else {
+                videoResultsDiv.innerHTML = '<p>Nenhum vídeo encontrado.</p>';
+            }
+        }
+
+        // Função para buscar vídeos utilizando a SERPER API
+        function searchVideos(apiKey, endpoint, query) {
+            fetch(`${endpoint}?q=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => displayVideoResults(data))
+            .catch(error => console.error('Erro ao buscar vídeos:', error));
+        }
+
+        // Adicionando o evento de submit ao formulário
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const apiKey = document.getElementById('api-key').value;
+            const endpoint = document.getElementById('api-endpoint').value;
+            const query = document.getElementById('query').value;
+            if (apiKey && endpoint && query) {
+                searchVideos(apiKey, endpoint, query);
+            }
+        });
+    </script>
+</body>
+</html>

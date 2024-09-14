@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa Rápida🔎</title>
+    <!-- Incluindo Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #3f51b5;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 500;
+        }
+        .search-container {
+            background-color: #fff;
+            padding: 30px;
+            margin: 30px auto;
+            border-radius: 8px;
+            max-width: 800px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-inline .form-control {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .btn-search {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 500;
+            background-color: #3f51b5;
+            border-color: #3f51b5;
+        }
+        .btn-search:hover {
+            background-color: #303f9f;
+            border-color: #303f9f;
+        }
+        #results {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .result-item {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+            transition: box-shadow 0.3s;
+        }
+        .result-item:hover {
+            box-shadow: 0 4px 12px rgba(32,33,36,0.28);
+        }
+        .result-item h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #1a0dab;
+        }
+        .result-item h2 a {
+            text-decoration: none;
+        }
+        .result-item h2 a:hover {
+            text-decoration: underline;
+        }
+        .result-item p {
+            font-size: 16px;
+            color: #202124;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .result-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-top: 50px;
+        }
+        @media (min-width: 768px) {
+            .form-inline .form-control {
+                width: auto;
+                margin-right: 10px;
+            }
+            .btn-search {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Pesquisa Rápida🔎</h1>
+        </div>
+    </header>
+    <div class="container">
+        <div class="search-container">
+            <form id="search-form" class="form-inline text-center">
+                <div class="form-group">
+                    <input type="text" id="query" class="form-control input-lg" placeholder="Digite sua busca..." required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="apiKey" class="form-control input-lg" placeholder="Insira sua API-KEY" required>
+                </div>
+                <button type="button" class="btn btn-primary btn-search" onclick="search()">Buscar</button>
+            </form>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <!-- Incluindo jQuery e Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        async function search() {
+            const query = document.getElementById('query').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const endpoint = 'https://google.serper.dev/search';
+
+            if (!query || !apiKey) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const headers = new Headers({
+                "X-API-KEY": apiKey,
+                "Content-Type": "application/json"
+            });
+
+            const body = JSON.stringify({
+                q: query,
+                gl: "br",
+                hl: "pt-br"
+            });
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: headers,
+                    body: body
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro na resposta da API.');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `
+                    <div class="no-results">
+                        <p class="text-danger">Ocorreu um erro: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (data.knowledgeGraph) {
+                const kg = data.knowledgeGraph;
+                const kgDiv = document.createElement('div');
+                kgDiv.classList.add('result-item');
+                kgDiv.innerHTML = `
+                    <h2>${kg.title}</h2>
+                    <p><strong>Tipo:</strong> ${kg.type}</p>
+                    <p><strong>Descrição:</strong> ${kg.description}</p>
+                    ${kg.website ? `<p><strong>Website:</strong> <a href="${kg.website}" target="_blank">${kg.website}</a></p>` : ''}
+                    ${kg.imageUrl ? `<img src="${kg.imageUrl}" alt="${kg.title}">` : ''}
+                `;
+                resultsDiv.appendChild(kgDiv);
+            }
+
+            if (data.organic && data.organic.length > 0) {
+                data.organic.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.classList.add('result-item');
+                    resultDiv.innerHTML = `
+                        <h2><a href="${result.link}" target="_blank">${result.title}</a></h2>
+                        <p>${result.snippet}</p>
+                    `;
+                    resultsDiv.appendChild(resultDiv);
+                });
+            }
+
+            if (!data.knowledgeGraph && (!data.organic || data.organic.length === 0)) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <p>Nenhum resultado encontrado.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+    
+</body>
+</html>

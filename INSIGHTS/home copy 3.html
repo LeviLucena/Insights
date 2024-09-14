@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Neural Futurista</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .point {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #1e90ff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+        }
+
+        .menu-content {
+            position: absolute;
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 20;
+            max-width: 300px;
+            text-align: center;
+            transform: translate(-50%, -50%);
+        }
+
+        .menu-content h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .menu-content p {
+            margin: 10px 0 0;
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <!-- Pontos do menu -->
+    <div class="point" id="point1" style="top: 20%; left: 30%;" data-info="Item 1"></div>
+    <div class="point" id="point2" style="top: 60%; left: 70%;" data-info="Item 2"></div>
+    <div class="point" id="point3" style="top: 80%; left: 20%;" data-info="Item 3"></div>
+    <div class="point" id="point4" style="top: 40%; left: 50%;" data-info="Item 4"></div>
+
+    <!-- Conteúdo do menu -->
+    <div class="menu-content" id="menu-content">
+        <h1 id="menu-title">Menu Item</h1>
+        <p id="menu-description">Descrição do item.</p>
+    </div>
+
+    <script>
+        // Configuração do canvas
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Configuração dos pontos
+        const points = Array.from(document.querySelectorAll('.point'));
+        const lines = [];
+        const lineColor = 'rgba(30, 144, 255, 0.5)';
+
+        // Função para desenhar linhas no canvas
+        function drawLine(x1, y1, x2, y2) {
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Função para atualizar as linhas
+        function updateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const rects = points.map(p => p.getBoundingClientRect());
+            for (let i = 0; i < rects.length; i++) {
+                const rect1 = rects[i];
+                const x1 = rect1.left + rect1.width / 2;
+                const y1 = rect1.top + rect1.height / 2;
+                for (let j = i + 1; j < rects.length; j++) {
+                    const rect2 = rects[j];
+                    const x2 = rect2.left + rect2.width / 2;
+                    const y2 = rect2.top + rect2.height / 2;
+                    drawLine(x1, y1, x2, y2);
+                }
+            }
+        }
+
+        // Função para animar as linhas
+        function animateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateLines();
+            requestAnimationFrame(animateLines);
+        }
+
+        animateLines();
+
+        // Exibição do conteúdo do menu ao clicar nos pontos
+        points.forEach(point => {
+            point.addEventListener('click', (event) => {
+                const info = point.getAttribute('data-info');
+                const rect = point.getBoundingClientRect();
+                const top = rect.top + window.scrollY + rect.height / 2;
+                const left = rect.left + window.scrollX + rect.width / 2;
+
+                document.getElementById('menu-title').textContent = info;
+                document.getElementById('menu-description').textContent = `Descrição do ${info}.`;
+                document.getElementById('menu-content').style.top = `${top}px`;
+                document.getElementById('menu-content').style.left = `${left}px`;
+                document.getElementById('menu-content').style.display = 'block';
+            });
+        });
+
+        // Fecha o conteúdo do menu ao clicar fora
+        document.addEventListener('click', (event) => {
+            if (!document.getElementById('menu-content').contains(event.target) && !event.target.classList.contains('point')) {
+                document.getElementById('menu-content').style.display = 'none';
+            }
+        });
+
+        // Redimensiona o canvas quando a janela é redimensionada
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            updateLines();
+        });
+    </script>
+</body>
+
+</html>
