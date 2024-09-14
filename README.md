@@ -3,9 +3,10 @@ Onde transformamos ideias inovadoras em soluções. Explore como nosso conhecime
 
 ![image](https://github.com/user-attachments/assets/7f3f0c87-e130-4a24-8aac-1df217036e6a)
 
-
 ## 📚 Um Mundo de Ideias em um Só Lugar
 Aqui, você encontrará uma vasta coleção de ideias inovadoras e inspiradoras reunidas em um único lugar. Nossa plataforma é um verdadeiro ponto de encontro para criatividade e conhecimento, onde você pode explorar uma rica variedade de conceitos e soluções. Desde estratégias revolucionárias até insights detalhados, oferecemos tudo o que você precisa para dar vida às suas ideias e alcançar novos patamares. Descubra um universo de possibilidades e encontre a inspiração que você busca para transformar suas visões em realidade!
+
+![image](https://github.com/user-attachments/assets/d8c1ed57-cafc-460b-81c9-a36b42ec8fa2)
 
 ## 🚀 Transformação de Ideias
 Converta suas ideias mais ambiciosas em soluções práticas e eficazes com nossa equipe de especialistas dedicados. Estamos aqui para transformar sua visão em realidade.
