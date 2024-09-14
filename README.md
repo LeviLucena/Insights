@@ -1,6 +1,7 @@
 # 🌟 Descubra o Poder dos Insights
 Onde transformamos ideias inovadoras em soluções. Explore como nosso conhecimento e expertise podem desbloquear novas oportunidades e impulsionar sua jornada de sucesso.
 
+![image](https://github.com/user-attachments/assets/7f3f0c87-e130-4a24-8aac-1df217036e6a)
 
 
 ## 📚 Um Mundo de Ideias em um Só Lugar
